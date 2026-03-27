@@ -1489,105 +1489,100 @@
     </section>
 
     <script>
-    // ── Signature Canvas — lazy init so it fires AFTER the page is visible ──
-    (function(){
-      let sigInitialized = false;
+    // ── Signature Canvas ──────────────────────────────────────────────────────
+    // Uses a MutationObserver on #page-hiring so the canvas initialises the
+    // INSTANT the div becomes visible (class "hidden" is removed).
+    // No showPage hooks, no timing guesses — just a direct DOM watch.
+    (function () {
+      var canvas, ctx, dataInput, statusEl;
+      var drawing = false;
+      var ready   = false;
 
-      function initSignature() {
-        if (sigInitialized) return;
-        const canvas = document.getElementById('sig-canvas');
-        if (!canvas) return;
-        // Guard: only init once the canvas has real dimensions
-        const rect = canvas.getBoundingClientRect();
-        if (rect.width === 0) return;
-        sigInitialized = true;
+      function setupCtx() {
+        var ratio = window.devicePixelRatio || 1;
+        var rect  = canvas.getBoundingClientRect();
+        canvas.width  = Math.round(rect.width  * ratio);
+        canvas.height = Math.round(rect.height * ratio);
+        ctx = canvas.getContext('2d');
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth   = 2.5;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+      }
 
-        const ctx = canvas.getContext('2d');
-        const status = document.getElementById('sig-status');
-        const dataInput = document.getElementById('sig-data-input');
-        let drawing = false;
+      function getXY(e) {
+        var rect = canvas.getBoundingClientRect();
+        var src  = e.touches ? e.touches[0] : e;
+        return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+      }
 
-        function setupCtx() {
-          const ratio = window.devicePixelRatio || 1;
-          const r = canvas.getBoundingClientRect();
-          canvas.width  = Math.round(r.width  * ratio);
-          canvas.height = Math.round(r.height * ratio);
-          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-          ctx.strokeStyle = '#60a5fa';
-          ctx.lineWidth   = 2.5;
-          ctx.lineCap     = 'round';
-          ctx.lineJoin    = 'round';
-        }
-        setupCtx();
+      function onDown(e) {
+        drawing = true;
+        var p = getXY(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      }
+      function onMove(e) {
+        if (!drawing) return;
+        var p = getXY(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        canvas.classList.add('signed');
+        statusEl.textContent = 'Signature captured ✓';
+        statusEl.style.color = '#4ade80';
+        dataInput.value = canvas.toDataURL();
+      }
+      function onUp() { drawing = false; }
 
-        function getPos(e) {
-          const r = canvas.getBoundingClientRect();
-          const src = e.touches ? e.touches[0] : e;
-          return { x: src.clientX - r.left, y: src.clientY - r.top };
-        }
+      function attachEvents() {
+        canvas.addEventListener('mousedown',  onDown);
+        canvas.addEventListener('mousemove',  onMove);
+        canvas.addEventListener('mouseup',    onUp);
+        canvas.addEventListener('mouseleave', onUp);
+        canvas.addEventListener('touchstart', function(e){ e.preventDefault(); onDown(e); }, { passive: false });
+        canvas.addEventListener('touchmove',  function(e){ e.preventDefault(); onMove(e); }, { passive: false });
+        canvas.addEventListener('touchend',   onUp);
 
-        function startDraw(e) {
-          drawing = true;
-          const p = getPos(e);
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-        }
-        function moveDraw(e) {
-          if (!drawing) return;
-          const p = getPos(e);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
-          canvas.classList.add('signed');
-          status.textContent = 'Signature captured ✓';
-          status.style.color = '#4ade80';
-          dataInput.value = canvas.toDataURL();
-        }
-        function endDraw() { drawing = false; }
-
-        canvas.addEventListener('mousedown',  startDraw);
-        canvas.addEventListener('mousemove',  moveDraw);
-        canvas.addEventListener('mouseup',    endDraw);
-        canvas.addEventListener('mouseleave', endDraw);
-
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); startDraw(e); }, { passive: false });
-        canvas.addEventListener('touchmove',  e => { e.preventDefault(); moveDraw(e);  }, { passive: false });
-        canvas.addEventListener('touchend',   endDraw);
-
-        document.getElementById('sig-clear-btn').addEventListener('click', function(){
-          const ratio = window.devicePixelRatio || 1;
+        document.getElementById('sig-clear-btn').addEventListener('click', function () {
+          var ratio = window.devicePixelRatio || 1;
           ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
           canvas.classList.remove('signed');
-          status.textContent = 'Please sign above';
-          status.style.color = '';
+          statusEl.textContent = 'Please sign above';
+          statusEl.style.color = '';
           dataInput.value = '';
-        });
-
-        window.addEventListener('resize', function(){
-          // Re-setup on resize (clears canvas — acceptable)
-          setupCtx();
-          dataInput.value = '';
-          canvas.classList.remove('signed');
-          status.textContent = 'Please sign above';
-          status.style.color = '';
         });
       }
 
-      // Hook into showPage so we init the moment Hiring becomes visible
-      const _orig = window.showPage;
-      window.showPage = function(name) {
-        _orig(name);
-        if (name === 'hiring') {
-          // Use rAF to ensure the DOM has painted and the canvas has real dimensions
-          requestAnimationFrame(function(){
-            requestAnimationFrame(initSignature);
-          });
-        }
-      };
+      function initSig() {
+        if (ready) return;
+        canvas    = document.getElementById('sig-canvas');
+        dataInput = document.getElementById('sig-data-input');
+        statusEl  = document.getElementById('sig-status');
+        if (!canvas) return;
+        setupCtx();
+        attachEvents();
+        ready = true;
+      }
 
-      // Also try on DOMContentLoaded in case the page loads directly on hiring
-      document.addEventListener('DOMContentLoaded', function(){
-        if (!document.getElementById('page-hiring').classList.contains('hidden')) {
-          requestAnimationFrame(function(){ requestAnimationFrame(initSignature); });
+      // Watch #page-hiring for class changes (hidden ↔ visible)
+      var hiringPage = document.getElementById('page-hiring');
+      if (hiringPage) {
+        var obs = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            if (m.attributeName === 'class' && !hiringPage.classList.contains('hidden')) {
+              // Page just became visible — init on next paint
+              requestAnimationFrame(initSig);
+            }
+          });
+        });
+        obs.observe(hiringPage, { attributes: true });
+      }
+
+      // Safety net: also try on window load in case page starts visible
+      window.addEventListener('load', function () {
+        if (hiringPage && !hiringPage.classList.contains('hidden')) {
+          requestAnimationFrame(initSig);
         }
       });
     })();
