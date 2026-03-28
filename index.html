@@ -156,46 +156,46 @@
       <h2 class="font-bebas text-4xl md:text-5xl text-center mb-4">What We <span class="text-gradient">Offer</span></h2>
       <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Professional towing and roadside assistance services across Austin and surrounding areas</p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(0)">
         <div class="service-icon mb-3 flex items-center justify-center h-16"><img src="https://i.ibb.co/zLDgRPX/IMG-3999-Photoroom.png" alt="Towing Service" class="h-full w-auto object-contain" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-4xl\'>🚛</span>';">
         </div>
         <h3 class="font-semibold">Towing</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(2)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 text-5xl">
          🅿️
         </div>
         <h3 class="font-semibold">Impounds</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(3)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 text-5xl">
          🔑
         </div>
         <h3 class="font-semibold">Repos</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(4)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 pt-2"><img src="https://i.ibb.co/60Wj8krq/tire-image-icon-Photoroom.png" alt="Tire Service" class="h-[83px] w-auto object-contain" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-4xl\'>🛞</span>';">
         </div>
         <h3 class="font-semibold">Tire Service</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(5)">
         <div class="service-icon mb-3 flex items-center justify-center h-16"><img src="https://i.ibb.co/xSrDPs34/IMG-4005-Photoroom.png" alt="Winch Out Service" class="h-[73px] w-auto object-contain" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-4xl\'>⛓️</span>';">
         </div>
         <h3 class="font-semibold">Winch Out</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(6)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 text-5xl">
          🔐
         </div>
         <h3 class="font-semibold">Lock Out</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(7)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 text-5xl">
          🔋
         </div>
         <h3 class="font-semibold">Jump Start</h3>
        </div>
-       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover">
+       <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showServiceSlide(8)">
         <div class="service-icon mb-3 flex items-center justify-center h-16 text-5xl">
          ⛽
         </div>
@@ -767,6 +767,16 @@
           goTo(0, true);
         }
       };
+
+      /* ── Deep-link helper called by Quick Services cards ── */
+      window.showServiceSlide = function (slideIndex) {
+        // Navigate to services page first, then jump to the correct slide
+        window.showPage('services');
+        // Use rAF to let the page become visible before sliding
+        requestAnimationFrame(function () {
+          goTo(slideIndex, true);
+        });
+      };
  
       /* ── Init ── */
       goTo(0, true);
@@ -1043,6 +1053,15 @@
       }
       .hire-truck-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
       @media(max-width: 640px) { .hire-truck-row { grid-template-columns: 1fr; } }
+      /* Fix date input overflow on mobile */
+      input[type="date"].hire-input {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        appearance: none;
+      }
       /* Signature canvas */
       #sig-canvas {
         width: 100%;
@@ -1128,7 +1147,7 @@
       </div>
 
       <!-- Application Form -->
-      <form id="hiring-form" method="POST" action="https://formspree.io/f/xaqlqngo" enctype="multipart/form-data">
+      <form id="hiring-form" method="POST" action="https://formspree.io/f/xaqlqngo">
 
         <!-- Hidden field: signature data -->
         <input type="hidden" name="signature_data" id="sig-data-input">
@@ -1350,6 +1369,16 @@
           </div>
         </div>
 
+        <!-- ══ WORK EXPERIENCE ══ -->
+        <div class="hire-section-header">Work Experience</div>
+        <div class="hire-section-body">
+          <div class="hire-field-group">
+            <label class="hire-label">Describe your work history <span class="text-blue-400">*</span></label>
+            <p class="text-xs text-gray-500 mb-2">Include company names, positions held, dates, and any relevant responsibilities. Feel free to write as much as you like.</p>
+            <textarea name="work_experience" required rows="8" class="hire-input" style="resize:vertical;line-height:1.6;" placeholder="Example:&#10;Tow Operator — ABC Towing, Austin TX (2021–2024)&#10;Operated flatbed and wrecker trucks for light/medium duty tows. Handled roadside assistance calls, lock-outs, and jump starts.&#10;&#10;Driver — XYZ Transport (2019–2021)&#10;Long-haul driver responsible for safe delivery of cargo across Texas."></textarea>
+          </div>
+        </div>
+
         <!-- ══ SKILLS ══ -->
         <div class="hire-section-header">Skills</div>
         <div class="hire-section-body">
@@ -1371,45 +1400,6 @@
               <input type="text" name="skill_4" class="hire-input" placeholder="">
             </div>
           </div>
-        </div>
-
-        <!-- ══ WORK EXPERIENCE ══ -->
-        <div class="hire-section-header">Work Experience</div>
-        <div class="hire-section-body">
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <div class="hire-grid-2" style="grid-template-columns:1.5fr 1fr 1fr 1fr;">
-              <label class="hire-label" style="align-self:end;padding-bottom:4px;">Company Name</label>
-              <label class="hire-label" style="align-self:end;padding-bottom:4px;">Position</label>
-              <label class="hire-label" style="align-self:end;padding-bottom:4px;">Employer / Supervisor</label>
-              <label class="hire-label" style="align-self:end;padding-bottom:4px;">Start – End Year</label>
-            </div>
-            <!-- 4 work rows -->
-            <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:10px;">
-              <input type="text" name="work1_company" class="hire-input" placeholder="Company">
-              <input type="text" name="work1_position" class="hire-input" placeholder="Position">
-              <input type="text" name="work1_employer" class="hire-input" placeholder="Supervisor">
-              <input type="text" name="work1_dates" class="hire-input" placeholder="2020-2022">
-            </div>
-            <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:10px;">
-              <input type="text" name="work2_company" class="hire-input" placeholder="Company">
-              <input type="text" name="work2_position" class="hire-input" placeholder="Position">
-              <input type="text" name="work2_employer" class="hire-input" placeholder="Supervisor">
-              <input type="text" name="work2_dates" class="hire-input" placeholder="2020-2022">
-            </div>
-            <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:10px;">
-              <input type="text" name="work3_company" class="hire-input" placeholder="Company">
-              <input type="text" name="work3_position" class="hire-input" placeholder="Position">
-              <input type="text" name="work3_employer" class="hire-input" placeholder="Supervisor">
-              <input type="text" name="work3_dates" class="hire-input" placeholder="2020-2022">
-            </div>
-            <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:10px;">
-              <input type="text" name="work4_company" class="hire-input" placeholder="Company">
-              <input type="text" name="work4_position" class="hire-input" placeholder="Position">
-              <input type="text" name="work4_employer" class="hire-input" placeholder="Supervisor">
-              <input type="text" name="work4_dates" class="hire-input" placeholder="2020-2022">
-            </div>
-          </div>
-          <p class="text-xs text-gray-600 mt-4">Columns stack vertically on mobile screens.</p>
         </div>
 
         <!-- ══ GENERAL / CONFIRMATION ══ -->
@@ -1457,18 +1447,19 @@
           </div>
         </div>
 
-        <!-- ══ RESUME UPLOAD ══ -->
-        <div class="hire-section-header" style="margin-top:28px;">Upload Resume (Optional)</div>
+        <!-- ══ RESUME ══ -->
+        <div class="hire-section-header" style="margin-top:28px;">Resume (Optional)</div>
         <div class="hire-section-body">
-          <div class="hire-file-area" id="file-drop-area">
-            <input type="file" name="resume" accept=".pdf,.docx" id="resume-input">
+          <a href="mailto:towtimellc@outlook.com?subject=Resume%20-%20Job%20Application&body=Hi%2C%20I%20am%20attaching%20my%20resume%20for%20the%20position%20I%20applied%20for."
+             class="hire-file-area"
+             style="display:block;text-decoration:none;">
             <svg class="w-10 h-10 mx-auto mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            <p class="text-white font-semibold mb-1">Click or drag &amp; drop your resume</p>
-            <p class="text-xs text-gray-500">Accepts .PDF and .DOCX — max 10MB</p>
-            <p id="file-name-display" class="text-blue-400 text-sm mt-2 hidden"></p>
-          </div>
+            <p class="text-white font-semibold mb-1">Email your resume separately</p>
+            <p class="text-blue-400 text-sm">towtimellc@outlook.com</p>
+            <p class="text-xs text-gray-500 mt-2">Click to open your email app with the address pre-filled</p>
+          </a>
         </div>
 
         <!-- Submit -->
@@ -1587,75 +1578,90 @@
       });
     })();
 
-    // ── File upload display ──
-    document.getElementById('resume-input').addEventListener('change', function(){
-      const display = document.getElementById('file-name-display');
-      if (this.files && this.files[0]) {
-        display.textContent = '📎 ' + this.files[0].name;
-        display.classList.remove('hidden');
-      } else { display.classList.add('hidden'); }
-    });
-
-    // ── Work experience grid responsive ──
-    (function(){
-      const isMobile = () => window.innerWidth < 640;
-      function fixWorkRows(){
-        document.querySelectorAll('#hiring-form [style*="grid-template-columns:1.5fr"]').forEach(el=>{
-          if(isMobile()) el.style.gridTemplateColumns='1fr';
-          else el.style.gridTemplateColumns='1.5fr 1fr 1fr 1fr';
-        });
-      }
-      fixWorkRows();
-      window.addEventListener('resize', fixWorkRows);
-    })();
-
     // ── Hiring form submission ──
     document.getElementById('hiring-form').addEventListener('submit', function(e){
       e.preventDefault();
 
-      // Fix 4: Confirm checkbox must be checked
-      const confirmBox = this.querySelector('input[name="accuracy_confirmed"]');
+      // Confirm checkbox must be checked
+      var confirmBox = this.querySelector('input[name="accuracy_confirmed"]');
       if (!confirmBox.checked) {
-        confirmBox.closest('.hire-field-group').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        confirmBox.closest('.hire-field-group').style.outline = '2px solid #f87171';
-        confirmBox.closest('.hire-field-group').style.borderRadius = '10px';
-        setTimeout(()=>{ confirmBox.closest('.hire-field-group').style.outline = ''; }, 3000);
+        var cg = confirmBox.closest('.hire-field-group');
+        cg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        cg.style.outline = '2px solid #f87171';
+        cg.style.borderRadius = '10px';
+        setTimeout(function(){ cg.style.outline = ''; }, 3000);
         alert('Please check the confirmation box before submitting.');
         return;
       }
 
       // Signature required
-      const sigData = document.getElementById('sig-data-input').value;
+      var sigData = document.getElementById('sig-data-input').value;
       if (!sigData) {
         document.getElementById('sig-canvas').scrollIntoView({ behavior: 'smooth', block: 'center' });
         alert('Please provide your digital signature before submitting.');
         return;
       }
 
-      const btn = this.querySelector('.hire-submit-btn');
+      var btn = this.querySelector('.hire-submit-btn');
       btn.textContent = 'Submitting…';
       btn.disabled = true;
-      const formData = new FormData(this);
+
+      // ── Build a plain JSON payload ─────────────────────────────────────────
+      // Formspree's free tier reliably accepts JSON. We skip the raw base64
+      // image (too large) and instead note "signature on file".
+      var form = this;
+      var data = {};
+
+      // Collect all named inputs except file inputs and the raw base64 sig
+      var elements = form.elements;
+      for (var i = 0; i < elements.length; i++) {
+        var el = elements[i];
+        if (!el.name || el.type === 'file' || el.name === 'signature_data') continue;
+        if (el.type === 'checkbox') {
+          if (el.checked) {
+            // Group multi-checkboxes as comma-separated string
+            if (data[el.name]) {
+              data[el.name] += ', ' + el.value;
+            } else {
+              data[el.name] = el.value;
+            }
+          }
+        } else if (el.type === 'radio') {
+          if (el.checked) data[el.name] = el.value;
+        } else {
+          if (el.value.trim() !== '') data[el.name] = el.value.trim();
+        }
+      }
+
+      // Flag that applicant signed (don't send 200KB of base64)
+      data['signature'] = 'Applicant signed digitally ✓';
+
       fetch('https://formspree.io/f/xaqlqngo', {
         method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      }).then(r => {
+        body: JSON.stringify(data),
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+      }).then(function(r) {
         if (r.ok) {
           document.getElementById('hire-success').classList.remove('hidden');
           document.getElementById('hire-error').classList.add('hidden');
           document.getElementById('hire-success').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          this.reset();
+          form.reset();
           document.getElementById('sig-clear-btn').click();
-          document.getElementById('file-name-display').classList.add('hidden');
           btn.textContent = 'Submit Application →';
           btn.disabled = false;
         } else {
-          document.getElementById('hire-error').classList.remove('hidden');
-          btn.textContent = 'Submit Application →';
-          btn.disabled = false;
+          return r.json().then(function(body) {
+            console.error('Formspree error:', body);
+            var errEl = document.getElementById('hire-error');
+            errEl.querySelector('p').textContent = 'Submission failed: ' + (body.error || JSON.stringify(body.errors || body));
+            errEl.classList.remove('hidden');
+            btn.textContent = 'Submit Application →';
+            btn.disabled = false;
+          });
         }
-      }).catch(() => {
+      }).catch(function(err) {
+        console.error('Network error:', err);
+        document.getElementById('hire-error').querySelector('p').textContent = 'Network error — check your connection and try again.';
         document.getElementById('hire-error').classList.remove('hidden');
         btn.textContent = 'Submit Application →';
         btn.disabled = false;
