@@ -758,7 +758,18 @@
         if (e.key === 'ArrowRight') goTo(current + 1);
         if (e.key === 'ArrowLeft')  goTo(current - 1);
       });
- 
+     
+      /* ── Click to reset to slide 1 ── */
+      shell.addEventListener('click', function (e) {
+      // Ignore if the user was dragging (dx > 5px means it was a swipe, not a tap)
+        if (Math.abs(dragCurrent) > 5) return;
+
+      // Ignore clicks on the nav buttons and dots
+        if (e.target.closest('#svc-prev, #svc-next, #svc-dots')) return;
+  
+      goTo(0);
+     });
+     
       /* ── Reset when page is shown ── */
       const _origShowPage = window.showPage;
       window.showPage = function (name) {
